@@ -8,11 +8,11 @@ PacketSize:
 #include <EEPROM.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
-
 #include "sysSerial.h"
 
-#define BUS PB2
+#define BUS 5
 
+//Dallas OneWireBus PB2; //ATtiny85 (BUS)
 OneWire OW(BUS);
 DallasTemperature DS(&OW);
 
