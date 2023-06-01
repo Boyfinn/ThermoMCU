@@ -1,9 +1,9 @@
 //Constants
 #define MAX_MESSAGE_LENGTH 12
-#define SAVE 0x41 //Example: A12312345yz
-#define READ 0x42 //Example: B
-#define LOAD 0x43  //Example: C
-#define PURGE 0x44  //Example: D
+#define SAVE  0x24  //Example: $12312345yz
+#define READ  0x3F  //Example: ?
+#define LOAD  0x2E  //Example: C
+#define PURGE 0x2F  //Example: D
 
 //SoftwareSerial SoftSerial(PB0, PB1); //ATtiny85 (RX,TX)
 SoftwareSerial SoftSerial(2,3);
@@ -41,26 +41,28 @@ void RunCommand(char* c){
       break;
 
     case READ:
-      SoftSerial.print("LowCol:(");
-      SoftSerial.print(_c.LR, HEX);
-      SoftSerial.print(_c.LG, HEX);
-      SoftSerial.print(_c.LB, HEX);
-      SoftSerial.println(")");
+      SoftSerial.print((char)READ);
+      SoftSerial.print(",");
+      SoftSerial.print(_c.LR);
+      SoftSerial.print(",");
+      SoftSerial.print(_c.LG);
+      SoftSerial.print(",");
+      SoftSerial.print(_c.LB);
+      SoftSerial.print(",");
 
-      SoftSerial.print("HighCol:(");
-      SoftSerial.print(_c.HR, HEX);
-      SoftSerial.print(_c.HG, HEX);
-      SoftSerial.print(_c.HB, HEX);
-      SoftSerial.println(")");
+      SoftSerial.print(_c.HR);
+      SoftSerial.print(",");
+      SoftSerial.print(_c.HG);
+      SoftSerial.print(",");
+      SoftSerial.print(_c.HB);
+      SoftSerial.print(",");
 
-      SoftSerial.print("Temps:(");
       SoftSerial.print(_c.TL);
+      SoftSerial.print(",");
       SoftSerial.print(_c.TH);
-      SoftSerial.println(")");
-
-      SoftSerial.print("Diodes:(");
+      SoftSerial.print(",");
       SoftSerial.print(_c.DC);
-      SoftSerial.println(")");
+      SoftSerial.print(",");
       break;
     case LOAD:
       LoadEEPROM();
