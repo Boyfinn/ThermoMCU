@@ -10,7 +10,7 @@ PacketSize:
 #include <DallasTemperature.h>
 #include "sysSerial.h"
 
-#define BUS 5
+#define BUS PB0
 
 //Dallas OneWireBus PB2; //ATtiny85 (BUS)
 OneWire OW(BUS);
