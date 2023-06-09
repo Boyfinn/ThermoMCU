@@ -8,19 +8,33 @@ PacketSize:
 #include <EEPROM.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
+#include <Adafruit_NeoPixel.h>
 #include "sysSerial.h"
 
 #define BUS PB0
+#define LED PB4
 
 //Dallas OneWireBus PB2; //ATtiny85 (BUS)
 OneWire OW(BUS);
 DallasTemperature DS(&OW);
+Adafruit_NeoPixel NP;
 
 void setup() {
   SerialSetup();
   LoadEEPROM();
+  if(_c.DC <= 512)
+  {
+    NP = Adafruit_NeoPixel(_c.DC,LED,NEO_GRB+NEO_KHZ800);
+    NP.begin();
+    for(uint16_t n=0;n<_c.DC;n++)
+    {
+      NP.setPixelColor(n,NP.Color(255,255,255));
+      NP.show();
+      delay(45);
+    }
+  }
   if(DS.getDS18Count() != 0)
-    DS.setResolution(12);
+    DS.setResolution(9);
 }
 void loop() {
   GetSerial();
