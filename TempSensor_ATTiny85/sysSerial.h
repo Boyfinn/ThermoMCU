@@ -6,7 +6,7 @@
 #define PURGE 0x2F  //Example: D
 
 //SoftwareSerial SoftSerial(PB0, PB1); //ATtiny85 (RX,TX)
-SoftwareSerial SoftSerial(PB2,PB1);
+SoftwareSerial SoftSerial(10,11);
 
 struct config
 {

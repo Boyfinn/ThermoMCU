@@ -7,40 +7,66 @@ PacketSize:
 #include <SoftwareSerial.h>
 #include <EEPROM.h>
 #include <OneWire.h>
-#include <DallasTemperature.h>
-#include <Adafruit_NeoPixel.h>
+#include <DS18B20_INT.h>
+#include <FastLED.h>
 #include "sysSerial.h"
 
-#define BUS PB0
-#define LED PB4
+#define numLED 512
+
+#define BUS 2
+#define LED 3
+#define TCL 8
 
 //Dallas OneWireBus PB2; //ATtiny85 (BUS)
 OneWire OW(BUS);
-DallasTemperature DS(&OW);
-Adafruit_NeoPixel NP;
+DS18B20_INT DS(&OW);
+CRGB DiodeStrip[numLED];
+CRGB hiCol;
+CRGB loCol;
 
 void setup() {
+  Serial.begin(115200);
+  Serial.println("lol");
+  pinMode(TCL, INPUT);
   SerialSetup();
   LoadEEPROM();
+  DS.begin();
   if(_c.DC <= 512)
   {
-    NP = Adafruit_NeoPixel(_c.DC,LED,NEO_GRB+NEO_KHZ800);
-    NP.begin();
+    FastLED.addLeds<WS2812B, LED, GRB>(DiodeStrip, numLED);
+    hiCol = CRGB( _c.HR, _c.HG, _c.HB);
+    loCol = CRGB( _c.LR, _c.LG, _c.LB);
     for(uint16_t n=0;n<_c.DC;n++)
     {
-      NP.setPixelColor(n,NP.Color(255,255,255));
-      NP.show();
-      delay(45);
+      DiodeStrip[n] = loCol;
+      FastLED.show();
+    }
+    for(uint16_t n=0;n<_c.DC;n++)
+    {
+      DiodeStrip[n] = hiCol;
+      FastLED.show();
     }
   }
-  if(DS.getDS18Count() != 0)
-    DS.setResolution(9);
+  DS.setResolution(9);
 }
 void loop() {
-  GetSerial();
-  if(DS.getDS18Count() != 0) {
-    DS.requestTemperatures();
-    double temp = DS.getTempCByIndex(0);
+  if(digitalRead(TCL))
+  {
+    GetSerial();
+    return;
   }
-  delay(1000);
+  DS.requestTemperatures();
+  int t = DS.getTempC();
+  if(t <=_c.TH && t >= _c.TL)
+  {
+    int m = map(t,_c.TL, _c.TH,0,_c.DC);
+    int range = map(t,_c.TL, _c.TH,0,255);
+    CRGB c = blend(loCol,hiCol,range);
+    for(uint16_t n=0;n<_c.DC;n++)
+    {
+      DiodeStrip[n] = (n <= m)?c:CRGB::Black;
+      FastLED.show();
+    }
+  }
+  Serial.println(t);
 }
