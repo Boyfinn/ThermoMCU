@@ -27,7 +27,7 @@ bool heartbeat = false;
 
 void setup() {
   Serial.begin(115200);
-  Serial.println("lol");
+  Serial.println("Init...");
   pinMode(TCL, INPUT);
   SerialSetup();
   LoadEEPROM();
@@ -71,4 +71,5 @@ void loop() {
   }
   digitalWrite(LED_BUILTIN, heartbeat = !heartbeat);
   Serial.println(t);
+  delay(5000);
 }
