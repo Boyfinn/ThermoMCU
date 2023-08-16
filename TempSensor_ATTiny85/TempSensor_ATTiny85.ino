@@ -70,6 +70,6 @@ void loop() {
     }
   }
   digitalWrite(LED_BUILTIN, heartbeat = !heartbeat);
-  Serial.println(t);
-  delay(5000);
+  if(Serial) Serial.println(t);
+  delay(30000);
 }
