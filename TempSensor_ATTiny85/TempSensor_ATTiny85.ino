@@ -23,6 +23,7 @@ DS18B20_INT DS(&OW);
 CRGB DiodeStrip[numLED];
 CRGB hiCol;
 CRGB loCol;
+bool heartbeat = false;
 
 void setup() {
   Serial.begin(115200);
@@ -68,5 +69,6 @@ void loop() {
       FastLED.show();
     }
   }
+  digitalWrite(LED_BUILTIN, heartbeat = !heartbeat);
   Serial.println(t);
 }
